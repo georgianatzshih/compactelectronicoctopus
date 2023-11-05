@@ -75,7 +75,6 @@ def namingCSVs(path, filename, currency1, currency2):
     df['currency2'] = currency_2
     return (df)
 
-
 # note: banks key
 #   Bake = 1
 #   BoA = 2
@@ -122,10 +121,9 @@ def convertBanks(df, column):
     return(df)
 
 
-
 path = r"D:\[ f i l e s ]\d o c u m e n t s\u n i\y e a r   3\[ other ]\durhack\bidfx\all"
 
-# columns: date, time (hr), open, high, low, close, volume
+# columns: date, time (hr), open, high, low, close, volume, currency1, currency2
 _1923_b_u = namingCSVs(path, "1923BTCUSD.csv", "b", "u")
 _1923_e_c = namingCSVs(path, "1923EURCAD.csv", "e", "c")
 _1923_e_g = namingCSVs(path, "1923EURGBP.csv", "e", "g")
@@ -152,7 +150,7 @@ _2109 = list()
 _2109.extend(temp)
 
 
-# assigning column titles
+## assigning column titles
 all_1923 = pd.DataFrame()
 temp_d = list()
 temp_hr = list()
@@ -167,19 +165,19 @@ for i in range(7):
     _1923[i].columns = ['d', 'hr', 'o', 'h', 'l', 'c','v', 'currency1', 'currency2']
     _2109[i].columns = ['ms', 's', 'b', 'B_', 'currency1', 'currency2']
     convertBanks(_2109[i], "B_")
-    temp_d = ((temp_d), (_1923[i].d.tolist()))
-    temp_hr = ((temp_hr), (_1923[i].hr.tolist()))
-    temp_o = ((temp_o), (_1923[i].o.tolist()))
-    temp_h = ((temp_h), (_1923[i].h.tolist()))
-    temp_l = ((temp_l), (_1923[i].l.tolist()))
-    temp_c = ((temp_c), (_1923[i].c.tolist()))
-    temp_v = ((temp_v), (_1923[i].v.tolist()))
-    temp_cu1 = ((temp_cu1), (_1923[i].currency1.tolist()))
-    temp_cu2 = ((temp_cu2), (_1923[i].currency2.tolist()))
 
-temp = [(temp_d), (temp_hr), (temp_o), (temp_h), (temp_l), (temp_c), (temp_v)]
-all_1923 = pd.DataFrame(temp, columns=['d', 'hr', 'o', 'h', 'l', 'c','v', 'currency1', 'currency2'])
-print(all_1923.type())
+    temp_d.append(_1923[i].d.tolist())
+    temp_hr.append(_1923[i].hr.tolist())
+    temp_o.append(_1923[i].o.tolist())
+    temp_h.append(_1923[i].h.tolist())
+    temp_l.append(_1923[i].l.tolist())
+    temp_c.append(_1923[i].c.tolist())
+    temp_v.append(_1923[i].v.tolist())
+    temp_cu1.append(_1923[i].currency1.tolist())
+    temp_cu2.append(_1923[i].currency2.tolist())
+
+
+
 
 
 r, c = all_1923.shape
@@ -189,11 +187,25 @@ all_2109 = pd.concat([_2109[0], _2109[1], _2109[2], _2109[3], _2109[4], _2109[5]
 r, c = all_1923.shape
 print('rows:', r, 'columns:', c)
 
-# all of 2019 to 2023
-x = all_1923.shape.drop(['d', 'hr', 'o', 'h', 'l', 'c','v', 'currency1', 'currency2'], axis = 1)
-y = pd.DataFrame(['d', 'hr', 'o', 'h', 'l', 'c','v', 'currency1', 'currency2'])
-xTrain, xTest, yTrain, yTest = train_test_split(x, y, test_size = 0.05, random_state = 20, stratify = y)
+x = pd.DataFrame()
+x['d'] = temp_d
+x['hr'] = temp_hr
+x['o'] = temp_o
+x['h'] = temp_h
+x['l'] = temp_l
+x['c'] = temp_c
+x['v'] = temp_v
+x['currency1'] = temp_cu1
+x['currency2'] = temp_cu2
 
+y = ['d', 'hr', 'o', 'h', 'l', 'c','v', 'currency1', 'currency2']
+
+xTrain, xTest, yTrain, yTest = train_test_split(x, y, test_size = 0.05, random_state = 20, stratify = y)
+scaler = StandardScaler()
+scaler.fit(xTrain)
+
+xTrainScaled = scaler.transform(xTrain)
+xTestScaled = scaler.transform(xTest)
 
 #******************************
 
