@@ -166,15 +166,15 @@ for i in range(7):
     _2109[i].columns = ['ms', 's', 'b', 'B_', 'currency1', 'currency2']
     convertBanks(_2109[i], "B_")
 
-    temp_d.append(_1923[i].d.tolist())
-    temp_hr.append(_1923[i].hr.tolist())
-    temp_o.append(_1923[i].o.tolist())
-    temp_h.append(_1923[i].h.tolist())
-    temp_l.append(_1923[i].l.tolist())
-    temp_c.append(_1923[i].c.tolist())
-    temp_v.append(_1923[i].v.tolist())
-    temp_cu1.append(_1923[i].currency1.tolist())
-    temp_cu2.append(_1923[i].currency2.tolist())
+    temp_d = temp_d + _1923[i].d.tolist()
+    temp_hr = temp_hr + _1923[i].hr.tolist()
+    temp_o = temp_o + _1923[i].o.tolist()
+    temp_h = temp_h +_1923[i].h.tolist()
+    temp_l = temp_l + _1923[i].l.tolist()
+    temp_c = temp_c + _1923[i].c.tolist()
+    temp_v = temp_v + _1923[i].v.tolist()
+    temp_cu1 = temp_cu1 + _1923[i].currency1.tolist()
+    temp_cu2 = temp_cu2 + _1923[i].currency2.tolist()
 
 
 
@@ -198,8 +198,13 @@ x['v'] = temp_v
 x['currency1'] = temp_cu1
 x['currency2'] = temp_cu2
 
-y = ['d', 'hr', 'o', 'h', 'l', 'c','v', 'currency1', 'currency2']
+r,c = x.shape
+print(r,c)
+y = pd.DataFrame()
+y = ('d', 'hr', 'o', 'h', 'l', 'c','v', 'currency1', 'currency2')
 
+r,c = y.shape
+print(r,c)
 xTrain, xTest, yTrain, yTest = train_test_split(x, y, test_size = 0.05, random_state = 20, stratify = y)
 scaler = StandardScaler()
 scaler.fit(xTrain)
@@ -207,11 +212,9 @@ scaler.fit(xTrain)
 xTrainScaled = scaler.transform(xTrain)
 xTestScaled = scaler.transform(xTest)
 
-#******************************
 
 
-
-    # model
+# model
 hln = 32
 model = Sequential()
 # input
